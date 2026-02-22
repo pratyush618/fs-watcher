@@ -1,0 +1,51 @@
+[build-system]
+requires = ["maturin>=1.8,<2"]
+build-backend = "maturin"
+
+[project]
+name = "fs_watcher"
+requires-python = ">=3.9"
+description = "Rust-powered filesystem toolkit: fast walk, parallel hashing, bulk copy, file watching, and deduplication."
+version = "0.1.0"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Pratyush Sharma" },
+]
+keywords = ["filesystem", "walk", "hash", "copy", "watch", "dedup", "rust", "fast"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Rust",
+    "Topic :: System :: Filesystems",
+    "Typing :: Typed",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Repository = "https://github.com/pratyush618/fs-watcher"
+Issues = "https://github.com/pratyush618/fs-watcher/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-asyncio>=0.23",
+    "pytest-timeout>=2.2",
+    "maturin>=1.8",
+]
+
+[tool.maturin]
+python-source = "python"
+module-name = "fs_watcher._core"
+bindings = "pyo3"
+features = ["pyo3/extension-module"]
+
+[tool.mypy]
+mypy_path = "python"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+timeout = 30
