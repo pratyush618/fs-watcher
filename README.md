@@ -5,7 +5,7 @@ Rust-powered filesystem toolkit for Python. Fast recursive directory listing, pa
 ## Install
 
 ```bash
-pip install fs_watcher
+pip install pyfs_watcher
 ```
 
 **From source:**

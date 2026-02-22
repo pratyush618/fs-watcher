@@ -3,7 +3,7 @@ requires = ["maturin>=1.8,<2"]
 build-backend = "maturin"
 
 [project]
-name = "fs_watcher"
+name = "pyfs_watcher"
 requires-python = ">=3.9"
 description = "Rust-powered filesystem toolkit: fast walk, parallel hashing, bulk copy, file watching, and deduplication."
 version = "0.1.0"
@@ -25,8 +25,8 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/pratyush618/fs-watcher"
-Issues = "https://github.com/pratyush618/fs-watcher/issues"
+Repository = "https://github.com/pratyush618/pyfs-watcher"
+Issues = "https://github.com/pratyush618/pyfs-watcher/issues"
 
 [project.optional-dependencies]
 dev = [
