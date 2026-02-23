@@ -53,6 +53,7 @@ impl DuplicateGroup {
 /// 3. Full hash only for files matching in steps 1 and 2
 #[pyfunction]
 #[pyo3(signature = (paths, *, recursive=true, min_size=1, algorithm="blake3", partial_hash_size=4096, max_workers=None, progress_callback=None))]
+#[allow(clippy::too_many_arguments)]
 pub fn find_duplicates(
     py: Python<'_>,
     paths: Vec<String>,
@@ -92,15 +93,19 @@ pub fn find_duplicates(
         .collect();
 
     let candidate_count: usize = candidates_after_size.iter().map(|(_, f)| f.len()).sum();
-    report_progress(py, &progress_callback, "size_grouping", candidate_count, total_files)?;
+    report_progress(
+        py,
+        &progress_callback,
+        "size_grouping",
+        candidate_count,
+        total_files,
+    )?;
 
     // Stage 2: Partial hash
     report_progress(py, &progress_callback, "partial_hash", 0, candidate_count)?;
 
     let partial_groups = py.allow_threads(|| {
-        let work = || {
-            partial_hash_stage(&candidates_after_size, algo, partial_hash_size)
-        };
+        let work = || partial_hash_stage(&candidates_after_size, algo, partial_hash_size);
         match &pool {
             Some(p) => p.install(work),
             None => work(),
@@ -112,8 +117,17 @@ pub fn find_duplicates(
         .filter(|(_, _, files)| files.len() > 1)
         .collect();
 
-    let partial_count: usize = candidates_after_partial.iter().map(|(_, _, f)| f.len()).sum();
-    report_progress(py, &progress_callback, "partial_hash", partial_count, candidate_count)?;
+    let partial_count: usize = candidates_after_partial
+        .iter()
+        .map(|(_, _, f)| f.len())
+        .sum();
+    report_progress(
+        py,
+        &progress_callback,
+        "partial_hash",
+        partial_count,
+        candidate_count,
+    )?;
 
     // Stage 3: Full hash
     report_progress(py, &progress_callback, "full_hash", 0, partial_count)?;
@@ -132,15 +146,24 @@ pub fn find_duplicates(
         .map(|(hash_hex, size, files)| DuplicateGroup {
             hash_hex,
             file_size: size,
-            paths: files.into_iter().map(|p| p.to_string_lossy().into_owned()).collect(),
+            paths: files
+                .into_iter()
+                .map(|p| p.to_string_lossy().into_owned())
+                .collect(),
         })
         .collect();
 
     // Sort by wasted bytes descending (worst offenders first)
-    duplicates.sort_by(|a, b| b.wasted_bytes().cmp(&a.wasted_bytes()));
+    duplicates.sort_by_key(|g| std::cmp::Reverse(g.wasted_bytes()));
 
     let dup_count: usize = duplicates.iter().map(|g| g.paths.len()).sum();
-    report_progress(py, &progress_callback, "full_hash", dup_count, partial_count)?;
+    report_progress(
+        py,
+        &progress_callback,
+        "full_hash",
+        dup_count,
+        partial_count,
+    )?;
 
     Ok(duplicates)
 }
@@ -179,13 +202,11 @@ fn collect_files(
                 walkdir = walkdir.max_depth(1);
             }
 
-            for entry in walkdir {
-                if let Ok(entry) = entry {
-                    if entry.file_type().is_file() {
-                        let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-                        if size >= min_size {
-                            entries.push((entry.path().to_path_buf(), size));
-                        }
+            for entry in walkdir.into_iter().flatten() {
+                if entry.file_type().is_file() {
+                    let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+                    if size >= min_size {
+                        entries.push((entry.path().to_path_buf(), size));
                     }
                 }
             }
@@ -297,8 +318,7 @@ mod tests {
         fs::write(tmp.path().join("b.txt"), "world").unwrap();
         fs::write(tmp.path().join("tiny"), "").unwrap(); // empty
 
-        let entries =
-            collect_files(&[tmp.path().to_string_lossy().into_owned()], true, 1).unwrap();
+        let entries = collect_files(&[tmp.path().to_string_lossy().into_owned()], true, 1).unwrap();
         assert_eq!(entries.len(), 2); // empty file filtered by min_size=1
     }
 
@@ -332,7 +352,11 @@ mod tests {
         assert_eq!(partial_dup.len(), 2);
 
         let full = full_hash_stage(
-            &partial.iter().filter(|(_, _, f)| f.len() > 1).cloned().collect::<Vec<_>>(),
+            &partial
+                .iter()
+                .filter(|(_, _, f)| f.len() > 1)
+                .cloned()
+                .collect::<Vec<_>>(),
             Algorithm::Blake3,
         );
         let full_dup: Vec<_> = full.iter().filter(|(_, _, f)| f.len() > 1).collect();

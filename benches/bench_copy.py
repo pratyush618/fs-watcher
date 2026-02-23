@@ -1,13 +1,13 @@
-"""Benchmark: fs_watcher.copy_files vs shutil.copy2"""
+"""Benchmark: pyfs_watcher.copy_files vs shutil.copy2"""
 
 import os
 import shutil
+import sys
 import tempfile
 import time
-import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-import fs_watcher
+import pyfs_watcher
 
 
 def create_test_files(directory: str, count: int, size: int) -> list[str]:
@@ -28,9 +28,9 @@ def bench_shutil(paths: list[str], dest: str):
     return elapsed
 
 
-def bench_fs_watcher(paths: list[str], dest: str):
+def bench_pyfs_watcher(paths: list[str], dest: str):
     start = time.perf_counter()
-    fs_watcher.copy_files(paths, dest)
+    pyfs_watcher.copy_files(paths, dest)
     elapsed = time.perf_counter() - start
     return elapsed
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
         dst2 = os.path.join(tmpdir, "dst_fsw")
         os.makedirs(dst2)
-        time_fsw = bench_fs_watcher(paths, dst2)
-        print(f"fs_watcher.copy:    {time_fsw:.3f}s ({total_mb / time_fsw:.0f} MB/s)")
+        time_fsw = bench_pyfs_watcher(paths, dst2)
+        print(f"pyfs_watcher.copy:    {time_fsw:.3f}s ({total_mb / time_fsw:.0f} MB/s)")
 
         print(f"\nSpeedup: {time_shutil / time_fsw:.1f}x")

@@ -1,10 +1,8 @@
-from pathlib import Path
-
-import fs_watcher
+import pyfs_watcher
 
 
 def test_find_duplicates(duplicate_tree):
-    groups = fs_watcher.find_duplicates([str(duplicate_tree)])
+    groups = pyfs_watcher.find_duplicates([str(duplicate_tree)])
     assert len(groups) == 2  # Two groups: a's and b's
 
     # Sort by number of copies for consistent assertions
@@ -25,19 +23,19 @@ def test_find_duplicates_no_dups(tmp_path):
     for i in range(5):
         (tmp_path / f"unique_{i}.bin").write_bytes(bytes([i]) * 1000)
 
-    groups = fs_watcher.find_duplicates([str(tmp_path)])
+    groups = pyfs_watcher.find_duplicates([str(tmp_path)])
     assert len(groups) == 0
 
 
 def test_find_duplicates_min_size(duplicate_tree):
     # All files are 10000 or 5000 bytes. Setting min_size=10001 should exclude everything.
-    groups = fs_watcher.find_duplicates([str(duplicate_tree)], min_size=10001)
+    groups = pyfs_watcher.find_duplicates([str(duplicate_tree)], min_size=10001)
     assert len(groups) == 0
 
 
 def test_find_duplicates_with_progress(duplicate_tree):
     stages = []
-    groups = fs_watcher.find_duplicates(
+    groups = pyfs_watcher.find_duplicates(
         [str(duplicate_tree)],
         progress_callback=lambda stage, done, total: stages.append(stage),
     )
@@ -48,12 +46,12 @@ def test_find_duplicates_with_progress(duplicate_tree):
 
 
 def test_find_duplicates_sha256(duplicate_tree):
-    groups = fs_watcher.find_duplicates([str(duplicate_tree)], algorithm="sha256")
+    groups = pyfs_watcher.find_duplicates([str(duplicate_tree)], algorithm="sha256")
     assert len(groups) == 2
 
 
 def test_duplicate_group_repr(duplicate_tree):
-    groups = fs_watcher.find_duplicates([str(duplicate_tree)])
+    groups = pyfs_watcher.find_duplicates([str(duplicate_tree)])
     for g in groups:
         r = repr(g)
         assert "DuplicateGroup" in r
@@ -61,6 +59,6 @@ def test_duplicate_group_repr(duplicate_tree):
 
 
 def test_find_duplicates_sorted_by_waste(duplicate_tree):
-    groups = fs_watcher.find_duplicates([str(duplicate_tree)])
+    groups = pyfs_watcher.find_duplicates([str(duplicate_tree)])
     wastes = [g.wasted_bytes for g in groups]
     assert wastes == sorted(wastes, reverse=True)

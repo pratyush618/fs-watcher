@@ -274,7 +274,9 @@ fn copy_single_file(
     let interval = std::time::Duration::from_millis(callback_interval_ms);
 
     loop {
-        let n = reader.read(&mut buf).map_err(|e| FsError::Copy(e.to_string()))?;
+        let n = reader
+            .read(&mut buf)
+            .map_err(|e| FsError::Copy(e.to_string()))?;
         if n == 0 {
             break;
         }

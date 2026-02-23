@@ -148,8 +148,7 @@ impl FileWatcher {
             None => return Ok(Vec::new()),
         };
 
-        let result =
-            py.allow_threads(|| receiver.recv_timeout(Duration::from_millis(timeout_ms)));
+        let result = py.allow_threads(|| receiver.recv_timeout(Duration::from_millis(timeout_ms)));
 
         match result {
             Ok(Ok(events)) => {

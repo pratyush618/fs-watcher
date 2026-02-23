@@ -1,5 +1,5 @@
 [package]
-name = "fs_watcher"
+name = "pyfs_watcher"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"

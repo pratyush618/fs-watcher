@@ -1,32 +1,32 @@
-"""fs_watcher - Rust-powered filesystem toolkit."""
+"""pyfs_watcher - Rust-powered filesystem toolkit."""
 
-from fs_watcher._core import (
-    # Exceptions
-    FsWatcherError,
-    WalkError,
-    HashError,
+from pyfs_watcher._core import (
     CopyError,
-    WatchError,
-    # Walk
-    WalkEntry,
-    walk,
-    walk_collect,
-    # Hash
-    HashResult,
-    hash_file,
-    hash_files,
     # Copy/Move
     CopyProgress,
-    copy_files,
-    move_files,
-    # Watch
-    FileWatcher,
-    FileChange,
     # Dedup
     DuplicateGroup,
+    FileChange,
+    # Watch
+    FileWatcher,
+    # Exceptions
+    FsWatcherError,
+    HashError,
+    # Hash
+    HashResult,
+    # Walk
+    WalkEntry,
+    WalkError,
+    WatchError,
+    copy_files,
     find_duplicates,
+    hash_file,
+    hash_files,
+    move_files,
+    walk,
+    walk_collect,
 )
-from fs_watcher.watch import async_watch
+from pyfs_watcher.watch import async_watch
 
 __all__ = [
     # Exceptions

@@ -1,14 +1,13 @@
 import hashlib
-from pathlib import Path
 
+import pyfs_watcher
 import pytest
-import fs_watcher
 
 
 def test_hash_file_blake3(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("hello world")
-    result = fs_watcher.hash_file(str(f), algorithm="blake3")
+    result = pyfs_watcher.hash_file(str(f), algorithm="blake3")
     assert result.algorithm == "blake3"
     assert result.file_size == 11
     assert result.hash_hex == "d74981efa70a0c880b8d8c1985d075dbcbf679b99a5f9914e5aaf96b831a9e24"
@@ -18,7 +17,7 @@ def test_hash_file_blake3(tmp_path):
 def test_hash_file_sha256(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("hello world")
-    result = fs_watcher.hash_file(str(f), algorithm="sha256")
+    result = pyfs_watcher.hash_file(str(f), algorithm="sha256")
     assert result.algorithm == "sha256"
     # Verify against Python's hashlib
     expected = hashlib.sha256(b"hello world").hexdigest()
@@ -28,21 +27,21 @@ def test_hash_file_sha256(tmp_path):
 def test_hash_file_empty(tmp_path):
     f = tmp_path / "empty.txt"
     f.write_bytes(b"")
-    result = fs_watcher.hash_file(str(f))
+    result = pyfs_watcher.hash_file(str(f))
     assert result.file_size == 0
     assert len(result.hash_hex) > 0
 
 
 def test_hash_file_nonexistent():
     with pytest.raises(FileNotFoundError):
-        fs_watcher.hash_file("/nonexistent/file.txt")
+        pyfs_watcher.hash_file("/nonexistent/file.txt")
 
 
 def test_hash_file_invalid_algorithm(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("data")
-    with pytest.raises(fs_watcher.HashError):
-        fs_watcher.hash_file(str(f), algorithm="md5")
+    with pytest.raises(pyfs_watcher.HashError):
+        pyfs_watcher.hash_file(str(f), algorithm="md5")
 
 
 def test_hash_files_parallel(tmp_path):
@@ -52,7 +51,7 @@ def test_hash_files_parallel(tmp_path):
         f.write_text(f"content {i}")
         paths.append(str(f))
 
-    results = fs_watcher.hash_files(paths, algorithm="blake3")
+    results = pyfs_watcher.hash_files(paths, algorithm="blake3")
     assert len(results) == 10
     # All hashes should be unique (different content)
     hashes = [r.hash_hex for r in results]
@@ -67,7 +66,7 @@ def test_hash_files_with_callback(tmp_path):
         paths.append(str(f))
 
     callback_results = []
-    results = fs_watcher.hash_files(
+    results = pyfs_watcher.hash_files(
         paths,
         callback=lambda r: callback_results.append(r.hash_hex),
     )
@@ -78,7 +77,7 @@ def test_hash_files_with_callback(tmp_path):
 def test_hash_result_repr(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("data")
-    result = fs_watcher.hash_file(str(f))
+    result = pyfs_watcher.hash_file(str(f))
     r = repr(result)
     assert "HashResult" in r
 
@@ -86,6 +85,6 @@ def test_hash_result_repr(tmp_path):
 def test_hash_result_equality(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("same content")
-    r1 = fs_watcher.hash_file(str(f))
-    r2 = fs_watcher.hash_file(str(f))
+    r1 = pyfs_watcher.hash_file(str(f))
+    r2 = pyfs_watcher.hash_file(str(f))
     assert r1 == r2

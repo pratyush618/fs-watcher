@@ -100,6 +100,7 @@ enum FileTypeFilter {
 /// Uses jwalk for parallel directory reading, significantly faster than os.walk().
 #[pyfunction]
 #[pyo3(signature = (path, *, max_depth=None, follow_symlinks=false, sort=false, skip_hidden=false, file_type="any", glob_pattern=None))]
+#[allow(clippy::too_many_arguments)]
 pub fn walk(
     py: Python<'_>,
     path: &str,
@@ -118,7 +119,14 @@ pub fn walk(
         return Err(FsError::Walk(format!("path is not a directory: {}", path)).into());
     }
 
-    let opts = parse_walk_options(max_depth, follow_symlinks, sort, skip_hidden, file_type, glob_pattern)?;
+    let opts = parse_walk_options(
+        max_depth,
+        follow_symlinks,
+        sort,
+        skip_hidden,
+        file_type,
+        glob_pattern,
+    )?;
     let (sender, receiver) = mpsc::channel();
 
     // Spawn background thread for the walk
@@ -140,6 +148,7 @@ pub fn walk(
 /// GIL overhead by running the entire traversal in Rust.
 #[pyfunction]
 #[pyo3(signature = (path, *, max_depth=None, follow_symlinks=false, sort=false, skip_hidden=false, file_type="any", glob_pattern=None))]
+#[allow(clippy::too_many_arguments)]
 pub fn walk_collect(
     py: Python<'_>,
     path: &str,
@@ -158,7 +167,14 @@ pub fn walk_collect(
         return Err(FsError::Walk(format!("path is not a directory: {}", path)).into());
     }
 
-    let opts = parse_walk_options(max_depth, follow_symlinks, sort, skip_hidden, file_type, glob_pattern)?;
+    let opts = parse_walk_options(
+        max_depth,
+        follow_symlinks,
+        sort,
+        skip_hidden,
+        file_type,
+        glob_pattern,
+    )?;
 
     let results = py.allow_threads(|| collect_walk(root, opts));
 
@@ -188,9 +204,8 @@ fn parse_walk_options(
 
     let glob_matcher = match glob_pattern {
         Some(pattern) => {
-            let glob = Glob::new(pattern).map_err(|e| {
-                FsError::Walk(format!("invalid glob pattern {:?}: {}", pattern, e))
-            })?;
+            let glob = Glob::new(pattern)
+                .map_err(|e| FsError::Walk(format!("invalid glob pattern {:?}: {}", pattern, e)))?;
             Some(glob.compile_matcher())
         }
         None => None,
@@ -299,14 +314,12 @@ fn collect_walk(root: PathBuf, opts: WalkOptions) -> Vec<WalkEntry> {
     let walkdir = build_walkdir(root, &opts);
     let mut results = Vec::new();
 
-    for result in walkdir {
-        if let Ok(entry) = result {
-            if entry.depth == 0 {
-                continue;
-            }
-            if should_include(&entry, &opts) {
-                results.push(dir_entry_to_walk_entry(&entry));
-            }
+    for entry in walkdir.into_iter().flatten() {
+        if entry.depth == 0 {
+            continue;
+        }
+        if should_include(&entry, &opts) {
+            results.push(dir_entry_to_walk_entry(&entry));
         }
     }
 
@@ -384,7 +397,10 @@ mod tests {
         let results = collect_walk(tmp.path().to_path_buf(), opts);
         // skip_hidden filters dotfiles from results
         assert!(results.iter().all(|e| {
-            let name = std::path::Path::new(&e.path).file_name().unwrap().to_string_lossy();
+            let name = std::path::Path::new(&e.path)
+                .file_name()
+                .unwrap()
+                .to_string_lossy();
             !name.starts_with('.')
         }));
         assert_eq!(results.len(), 6);

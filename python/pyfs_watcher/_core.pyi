@@ -2,18 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator, Sequence
 from os import PathLike
 from typing import (
     Callable,
-    Iterator,
     Literal,
-    Sequence,
 )
 
 # ──── Exceptions ────
 
 class FsWatcherError(Exception):
-    """Base exception for all fs_watcher errors."""
+    """Base exception for all pyfs_watcher errors."""
 
 class WalkError(FsWatcherError):
     """Raised when a directory walk operation fails."""
@@ -100,7 +99,7 @@ def walk(
 
     Example::
 
-        for entry in fs_watcher.walk("/data", file_type="file", glob_pattern="*.py"):
+        for entry in pyfs_watcher.walk("/data", file_type="file", glob_pattern="*.py"):
             print(entry.path, entry.file_size)
     """
 
@@ -137,7 +136,7 @@ def walk_collect(
 
     Example::
 
-        entries = fs_watcher.walk_collect("/data", max_depth=3, sort=True, skip_hidden=True)
+        entries = pyfs_watcher.walk_collect("/data", max_depth=3, sort=True, skip_hidden=True)
         print(f"Found {len(entries)} entries")
     """
 
@@ -192,7 +191,7 @@ def hash_file(
 
     Example::
 
-        result = fs_watcher.hash_file("large.iso", algorithm="blake3")
+        result = pyfs_watcher.hash_file("large.iso", algorithm="blake3")
         print(result.hash_hex)  # "d74981efa70a0c880b..."
     """
 
@@ -223,7 +222,7 @@ def hash_files(
 
     Example::
 
-        results = fs_watcher.hash_files(
+        results = pyfs_watcher.hash_files(
             ["file1.bin", "file2.bin", "file3.bin"],
             algorithm="blake3",
             callback=lambda r: print(f"{r.path}: {r.hash_hex}"),
@@ -297,7 +296,7 @@ def copy_files(
             pct = p.bytes_copied / p.total_bytes * 100
             print(f"{pct:.0f}% - {p.current_file}")
 
-        fs_watcher.copy_files(
+        pyfs_watcher.copy_files(
             ["data/file1.bin", "data/file2.bin"],
             "/backup",
             progress_callback=on_progress,
@@ -334,7 +333,7 @@ def move_files(
 
     Example::
 
-        fs_watcher.move_files(["old/data.csv", "old/report.pdf"], "/archive")
+        pyfs_watcher.move_files(["old/data.csv", "old/report.pdf"], "/archive")
     """
 
 # ──── Watch ────
@@ -473,7 +472,7 @@ def find_duplicates(
 
     Example::
 
-        groups = fs_watcher.find_duplicates(
+        groups = pyfs_watcher.find_duplicates(
             ["/photos", "/backup"],
             min_size=1024,
             progress_callback=lambda stage, done, total: print(f"{stage}: {done}/{total}"),

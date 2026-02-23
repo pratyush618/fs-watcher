@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Sequence
 from os import PathLike
-from typing import Sequence
 
-from fs_watcher._core import FileChange, FileWatcher
+from pyfs_watcher._core import FileChange, FileWatcher
 
 
 async def async_watch(
@@ -36,9 +35,7 @@ async def async_watch(
     loop = asyncio.get_running_loop()
     try:
         while True:
-            events = await loop.run_in_executor(
-                None, watcher.poll_events, poll_interval_ms
-            )
+            events = await loop.run_in_executor(None, watcher.poll_events, poll_interval_ms)
             if events:
                 yield events
     finally:

@@ -1,14 +1,13 @@
-import time
 import threading
-from pathlib import Path
+import time
 
+import pyfs_watcher
 import pytest
-import fs_watcher
 
 
 def test_watcher_context_manager(tmp_path):
     """Test that FileWatcher works as a context manager."""
-    with fs_watcher.FileWatcher(str(tmp_path)) as w:
+    with pyfs_watcher.FileWatcher(str(tmp_path)) as w:
         # Create a file in a background thread
         def create_file():
             time.sleep(0.3)
@@ -17,7 +16,7 @@ def test_watcher_context_manager(tmp_path):
         t = threading.Thread(target=create_file)
         t.start()
 
-        changes = w.poll_events(timeout_ms=2000)
+        w.poll_events(timeout_ms=2000)
         t.join()
 
     # We might or might not catch the event depending on timing
@@ -26,7 +25,7 @@ def test_watcher_context_manager(tmp_path):
 
 def test_watcher_detects_creation(tmp_path):
     """Test that watcher detects file creation."""
-    watcher = fs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
+    watcher = pyfs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
     watcher.start()
 
     try:
@@ -52,7 +51,7 @@ def test_watcher_detects_modification(tmp_path):
     f = tmp_path / "existing.txt"
     f.write_text("original")
 
-    watcher = fs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
+    watcher = pyfs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
     watcher.start()
 
     try:
@@ -72,12 +71,12 @@ def test_watcher_detects_modification(tmp_path):
 
 
 def test_watcher_nonexistent_path():
-    with pytest.raises(fs_watcher.WatchError):
-        fs_watcher.FileWatcher("/nonexistent/path/xyz")
+    with pytest.raises(pyfs_watcher.WatchError):
+        pyfs_watcher.FileWatcher("/nonexistent/path/xyz")
 
 
 def test_watcher_ignore_patterns(tmp_path):
-    watcher = fs_watcher.FileWatcher(
+    watcher = pyfs_watcher.FileWatcher(
         str(tmp_path),
         debounce_ms=100,
         ignore_patterns=["*.tmp"],
@@ -103,7 +102,7 @@ def test_watcher_ignore_patterns(tmp_path):
 
 
 def test_file_change_repr(tmp_path):
-    watcher = fs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
+    watcher = pyfs_watcher.FileWatcher(str(tmp_path), debounce_ms=100)
     watcher.start()
 
     try:

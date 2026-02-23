@@ -1,8 +1,7 @@
-import os
 from pathlib import Path
 
+import pyfs_watcher
 import pytest
-import fs_watcher
 
 
 def test_copy_single_file(tmp_path):
@@ -11,7 +10,7 @@ def test_copy_single_file(tmp_path):
     dst_dir = tmp_path / "dest"
     dst_dir.mkdir()
 
-    result = fs_watcher.copy_files([str(src)], str(dst_dir))
+    result = pyfs_watcher.copy_files([str(src)], str(dst_dir))
     assert len(result) == 1
     assert Path(result[0]).read_text() == "hello"
 
@@ -24,7 +23,7 @@ def test_copy_multiple_files(tmp_path):
     dst = tmp_path / "dest"
     dst.mkdir()
 
-    result = fs_watcher.copy_files([str(src1), str(src2)], str(dst))
+    result = pyfs_watcher.copy_files([str(src1), str(src2)], str(dst))
     assert len(result) == 2
     assert (dst / "a.txt").read_text() == "aaa"
     assert (dst / "b.txt").read_text() == "bbb"
@@ -34,7 +33,7 @@ def test_copy_directory(copy_source, tmp_path):
     dst = tmp_path / "dest"
     dst.mkdir()
 
-    result = fs_watcher.copy_files([str(copy_source)], str(dst))
+    result = pyfs_watcher.copy_files([str(copy_source)], str(dst))
     assert len(result) > 0
     # Check nested file was copied
     assert (dst / "src" / "subdir" / "nested.txt").read_text() == "nested content"
@@ -46,8 +45,8 @@ def test_copy_overwrite_false(tmp_path):
     dst = tmp_path / "dst.txt"
     dst.write_text("existing")
 
-    with pytest.raises(fs_watcher.CopyError, match="overwrite"):
-        fs_watcher.copy_files([str(src)], str(dst))
+    with pytest.raises(pyfs_watcher.CopyError, match="overwrite"):
+        pyfs_watcher.copy_files([str(src)], str(dst))
 
 
 def test_copy_overwrite_true(tmp_path):
@@ -56,13 +55,13 @@ def test_copy_overwrite_true(tmp_path):
     dst = tmp_path / "dst.txt"
     dst.write_text("old content")
 
-    fs_watcher.copy_files([str(src)], str(dst), overwrite=True)
+    pyfs_watcher.copy_files([str(src)], str(dst), overwrite=True)
     assert dst.read_text() == "new content"
 
 
 def test_copy_nonexistent_source(tmp_path):
-    with pytest.raises(fs_watcher.CopyError):
-        fs_watcher.copy_files(["/nonexistent/file.txt"], str(tmp_path))
+    with pytest.raises(pyfs_watcher.CopyError):
+        pyfs_watcher.copy_files(["/nonexistent/file.txt"], str(tmp_path))
 
 
 def test_copy_with_progress(tmp_path):
@@ -72,7 +71,7 @@ def test_copy_with_progress(tmp_path):
     dst.mkdir()
 
     progress_updates = []
-    fs_watcher.copy_files(
+    pyfs_watcher.copy_files(
         [str(src)],
         str(dst),
         progress_callback=lambda p: progress_updates.append(p),
@@ -90,12 +89,12 @@ def test_move_file(tmp_path):
     dst = tmp_path / "dest"
     dst.mkdir()
 
-    result = fs_watcher.move_files([str(src)], str(dst))
+    result = pyfs_watcher.move_files([str(src)], str(dst))
     assert len(result) == 1
     assert not src.exists()
     assert Path(result[0]).read_text() == "moveme"
 
 
 def test_move_nonexistent_source(tmp_path):
-    with pytest.raises(fs_watcher.CopyError):
-        fs_watcher.move_files(["/nonexistent/file.txt"], str(tmp_path))
+    with pytest.raises(pyfs_watcher.CopyError):
+        pyfs_watcher.move_files(["/nonexistent/file.txt"], str(tmp_path))

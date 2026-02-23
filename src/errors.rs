@@ -1,14 +1,18 @@
+use pyo3::create_exception;
 use pyo3::exceptions::{PyFileNotFoundError, PyOSError, PyPermissionError};
 use pyo3::prelude::*;
-use pyo3::create_exception;
 use std::io::ErrorKind;
 
 // Exception hierarchy: all inherit from FsWatcherError
-create_exception!(fs_watcher._core, FsWatcherError, pyo3::exceptions::PyException);
-create_exception!(fs_watcher._core, WalkError, FsWatcherError);
-create_exception!(fs_watcher._core, HashError, FsWatcherError);
-create_exception!(fs_watcher._core, CopyError, FsWatcherError);
-create_exception!(fs_watcher._core, WatchError, FsWatcherError);
+create_exception!(
+    pyfs_watcher._core,
+    FsWatcherError,
+    pyo3::exceptions::PyException
+);
+create_exception!(pyfs_watcher._core, WalkError, FsWatcherError);
+create_exception!(pyfs_watcher._core, HashError, FsWatcherError);
+create_exception!(pyfs_watcher._core, CopyError, FsWatcherError);
+create_exception!(pyfs_watcher._core, WatchError, FsWatcherError);
 
 /// Internal error type that converts to PyErr.
 #[derive(Debug)]

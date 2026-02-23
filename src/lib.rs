@@ -1,4 +1,5 @@
 #![allow(unexpected_cfgs)]
+#![allow(clippy::useless_conversion)] // pyo3 proc macros generate .into() on PyResult returns
 
 use pyo3::prelude::*;
 
@@ -10,14 +11,17 @@ mod utils;
 mod walk;
 mod watch;
 
-/// fs_watcher._core - Rust-powered filesystem toolkit.
+/// pyfs_watcher._core - Rust-powered filesystem toolkit.
 #[pymodule]
 fn _core(py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Initialize Rust log -> Python logging bridge
     pyo3_log::init();
 
     // Exceptions
-    m.add("FsWatcherError", py.get_type_bound::<errors::FsWatcherError>())?;
+    m.add(
+        "FsWatcherError",
+        py.get_type_bound::<errors::FsWatcherError>(),
+    )?;
     m.add("WalkError", py.get_type_bound::<errors::WalkError>())?;
     m.add("HashError", py.get_type_bound::<errors::HashError>())?;
     m.add("CopyError", py.get_type_bound::<errors::CopyError>())?;

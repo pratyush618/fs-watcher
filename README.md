@@ -1,4 +1,4 @@
-# fs_watcher
+# pyfs_watcher
 
 Rust-powered filesystem toolkit for Python. Fast recursive directory listing, parallel file hashing, bulk copy/move with progress, cross-platform file watching, and file deduplication.
 
@@ -20,25 +20,25 @@ maturin develop
 ### Walk directories (parallel, faster than os.walk)
 
 ```python
-import fs_watcher
+import pyfs_watcher
 
 # Streaming iterator
-for entry in fs_watcher.walk("/data", file_type="file", glob_pattern="*.py"):
+for entry in pyfs_watcher.walk("/data", file_type="file", glob_pattern="*.py"):
     print(entry.path, entry.file_size)
 
 # Bulk collect (faster when you need all results)
-entries = fs_watcher.walk_collect("/data", max_depth=3, sort=True, skip_hidden=True)
+entries = pyfs_watcher.walk_collect("/data", max_depth=3, sort=True, skip_hidden=True)
 ```
 
 ### Hash files (parallel SHA256/BLAKE3)
 
 ```python
 # Single file
-result = fs_watcher.hash_file("large.iso", algorithm="blake3")
+result = pyfs_watcher.hash_file("large.iso", algorithm="blake3")
 print(result.hash_hex)
 
 # Parallel batch hashing
-results = fs_watcher.hash_files(paths, algorithm="blake3", callback=lambda r: print(r.path))
+results = pyfs_watcher.hash_files(paths, algorithm="blake3", callback=lambda r: print(r.path))
 ```
 
 ### Copy/move with progress
@@ -48,21 +48,21 @@ def on_progress(p):
     pct = p.bytes_copied / p.total_bytes * 100
     print(f"{pct:.0f}% - {p.current_file}")
 
-fs_watcher.copy_files(sources, "/dest", progress_callback=on_progress)
-fs_watcher.move_files(sources, "/dest")  # rename if same fs, copy+delete otherwise
+pyfs_watcher.copy_files(sources, "/dest", progress_callback=on_progress)
+pyfs_watcher.move_files(sources, "/dest")  # rename if same fs, copy+delete otherwise
 ```
 
 ### Watch for file changes
 
 ```python
 # Sync
-with fs_watcher.FileWatcher("/data", debounce_ms=500, ignore_patterns=["*.tmp"]) as w:
+with pyfs_watcher.FileWatcher("/data", debounce_ms=500, ignore_patterns=["*.tmp"]) as w:
     for changes in w:
         for c in changes:
             print(c.path, c.change_type)  # "created", "modified", "deleted"
 
 # Async
-async for changes in fs_watcher.async_watch("/data"):
+async for changes in pyfs_watcher.async_watch("/data"):
     for c in changes:
         print(c.path, c.change_type)
 ```
@@ -70,7 +70,7 @@ async for changes in fs_watcher.async_watch("/data"):
 ### Find duplicate files
 
 ```python
-groups = fs_watcher.find_duplicates(
+groups = pyfs_watcher.find_duplicates(
     ["/photos", "/backup"],
     min_size=1024,
     progress_callback=lambda stage, done, total: print(f"{stage}: {done}/{total}"),

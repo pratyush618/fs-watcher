@@ -1,13 +1,13 @@
-"""Benchmark: fs_watcher.hash vs hashlib"""
+"""Benchmark: pyfs_watcher.hash vs hashlib"""
 
 import hashlib
 import os
+import sys
 import tempfile
 import time
-import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-import fs_watcher
+import pyfs_watcher
 
 
 def create_test_files(directory: str, count: int, size: int) -> list[str]:
@@ -32,16 +32,16 @@ def bench_hashlib(paths: list[str]):
     return elapsed
 
 
-def bench_fs_watcher_sha256(paths: list[str]):
+def bench_pyfs_watcher_sha256(paths: list[str]):
     start = time.perf_counter()
-    fs_watcher.hash_files(paths, algorithm="sha256")
+    pyfs_watcher.hash_files(paths, algorithm="sha256")
     elapsed = time.perf_counter() - start
     return elapsed
 
 
-def bench_fs_watcher_blake3(paths: list[str]):
+def bench_pyfs_watcher_blake3(paths: list[str]):
     start = time.perf_counter()
-    fs_watcher.hash_files(paths, algorithm="blake3")
+    pyfs_watcher.hash_files(paths, algorithm="blake3")
     elapsed = time.perf_counter() - start
     return elapsed
 
@@ -56,13 +56,16 @@ if __name__ == "__main__":
         total_mb = count * size / 1024 / 1024
 
         time_hashlib = bench_hashlib(paths)
-        print(f"hashlib (SHA256, sequential):     {time_hashlib:.3f}s ({total_mb / time_hashlib:.0f} MB/s)")
+        hashlib_mbs = total_mb / time_hashlib
+        print(f"hashlib (SHA256, sequential):     {time_hashlib:.3f}s ({hashlib_mbs:.0f} MB/s)")
 
-        time_sha256 = bench_fs_watcher_sha256(paths)
-        print(f"fs_watcher (SHA256, parallel):     {time_sha256:.3f}s ({total_mb / time_sha256:.0f} MB/s)")
+        time_sha256 = bench_pyfs_watcher_sha256(paths)
+        sha256_mbs = total_mb / time_sha256
+        print(f"pyfs_watcher (SHA256, parallel):     {time_sha256:.3f}s ({sha256_mbs:.0f} MB/s)")
 
-        time_blake3 = bench_fs_watcher_blake3(paths)
-        print(f"fs_watcher (BLAKE3, parallel):     {time_blake3:.3f}s ({total_mb / time_blake3:.0f} MB/s)")
+        time_blake3 = bench_pyfs_watcher_blake3(paths)
+        blake3_mbs = total_mb / time_blake3
+        print(f"pyfs_watcher (BLAKE3, parallel):     {time_blake3:.3f}s ({blake3_mbs:.0f} MB/s)")
 
         print(f"\nSpeedup SHA256 (parallel vs seq): {time_hashlib / time_sha256:.1f}x")
         print(f"Speedup BLAKE3 vs hashlib SHA256: {time_hashlib / time_blake3:.1f}x")
