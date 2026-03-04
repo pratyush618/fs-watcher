@@ -3,9 +3,9 @@ site_name = "pyfs-watcher"
 site_url = "https://pratyush618.github.io/pyfs-watcher/"
 site_description = "Rust-powered filesystem toolkit for Python"
 site_author = "Pratyush Sharma"
-copyright = "&copy; 2025 Pratyush Sharma"
 repo_url = "https://github.com/pratyush618/pyfs-watcher"
 repo_name = "pratyush618/pyfs-watcher"
+copyright = "Copyright &copy; 2025 Pratyush Sharma"
 
 nav = [
   { "Home" = "index.md" },
@@ -107,3 +107,6 @@ alternate_style = true
 [project.markdown_extensions.pymdownx.mark]
 
 [project.markdown_extensions.pymdownx.snippets]
+
+[project.extra]
+generator = false
