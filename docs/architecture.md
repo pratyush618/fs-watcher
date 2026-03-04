@@ -21,6 +21,12 @@ graph TB
         G[copy module<br/>chunked I/O]
         H[watch module<br/>notify + debouncer]
         I[dedup module<br/>staged pipeline]
+        J[search module<br/>regex + rayon]
+        K[diff module<br/>walk + hash]
+        L[sync module<br/>walk + hash + copy]
+        M[snapshot module<br/>walk + hash + serde]
+        N[du module<br/>jwalk]
+        O[rename module<br/>regex + walk]
     end
 
     B --> D
@@ -30,6 +36,12 @@ graph TB
     D --> G
     D --> H
     D --> I
+    D --> J
+    D --> K
+    D --> L
+    D --> M
+    D --> N
+    D --> O
 ```
 
 ## Module Structure
@@ -43,6 +55,13 @@ pyfs-watcher/
 │   ├── copy.rs             # Copy/move operations
 │   ├── watch.rs            # Filesystem watching
 │   ├── dedup.rs            # Duplicate detection
+│   ├── search.rs           # Parallel content search
+│   ├── diff.rs             # Directory comparison
+│   ├── sync.rs             # Directory sync
+│   ├── snapshot.rs         # Snapshot/verify
+│   ├── du.rs               # Disk usage
+│   ├── rename.rs           # Batch rename
+│   ├── utils.rs            # Shared walk filter utilities
 │   └── errors.rs           # Error types
 ├── py_src/pyfs_watcher/    # Python source
 │   ├── __init__.py         # Re-exports from _core
@@ -156,6 +175,12 @@ Rust errors are mapped to Python exceptions at the PyO3 boundary:
 | `FsError::Hash(...)` | `HashError` |
 | `FsError::Copy(...)` | `CopyError` |
 | `FsError::Watch(...)` | `WatchError` |
+| `FsError::Search(...)` | `SearchError` |
+| `FsError::DirDiff(...)` | `DirDiffError` |
+| `FsError::Sync(...)` | `SyncError` |
+| `FsError::Snapshot(...)` | `SnapshotError` |
+| `FsError::DiskUsage(...)` | `DiskUsageError` |
+| `FsError::Rename(...)` | `RenameError` |
 | `std::io::ErrorKind::NotFound` | `FileNotFoundError` |
 | `std::io::ErrorKind::PermissionDenied` | `PermissionError` |
 
@@ -191,3 +216,7 @@ import pyfs_watcher
 | [crossbeam-channel](https://crates.io/crates/crossbeam-channel) | Lock-free channels |
 | [memmap2](https://crates.io/crates/memmap2) | Memory-mapped file I/O |
 | [pyo3-log](https://crates.io/crates/pyo3-log) | Logging bridge |
+| [regex](https://crates.io/crates/regex) | Content search and batch rename |
+| [serde](https://crates.io/crates/serde) | Snapshot serialization |
+| [serde_json](https://crates.io/crates/serde_json) | JSON snapshot format |
+| [chrono](https://crates.io/crates/chrono) | Timestamp generation |

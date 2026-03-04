@@ -12,7 +12,7 @@ hide:
 
 **Rust-powered filesystem toolkit for Python.**
 
-Fast recursive directory listing, parallel file hashing, bulk copy/move with progress, cross-platform file watching, and file deduplication — all from a single, typed Python package.
+Fast recursive directory listing, parallel file hashing, bulk copy/move with progress, cross-platform file watching, file deduplication, content search, directory diff and sync, file integrity snapshots, disk usage analysis, and batch rename — all from a single, typed Python package.
 
 ---
 
@@ -21,7 +21,7 @@ Fast recursive directory listing, parallel file hashing, bulk copy/move with pro
 - **Performance** — Core operations run in Rust with parallel execution via Rayon, bypassing the GIL. Walk directories and hash files 10x faster than pure Python.
 - **Type Safety** — Full type stubs (`py.typed`) ship with the package. Every function, class, and parameter has type annotations for IDE autocompletion and mypy/pyright checking.
 - **Cross-Platform** — Works on Linux, macOS, and Windows. File watching uses native OS APIs (inotify, FSEvents, ReadDirectoryChangesW).
-- **Batteries Included** — Five feature modules cover the most common filesystem operations: walk, hash, copy/move, watch, and dedup.
+- **Batteries Included** — Eleven feature modules cover the most common filesystem operations: walk, hash, copy/move, watch, dedup, search, diff, sync, snapshot, disk usage, and rename.
 
 ---
 
@@ -68,6 +68,54 @@ Fast recursive directory listing, parallel file hashing, bulk copy/move with pro
     Three-stage duplicate finder: size grouping, partial hash, then full hash. Finds duplicates across multiple directories.
 
     [Dedup guide →](guides/dedup.md)
+
+- **Search**
+
+    ---
+
+    Parallel content search with regex patterns. Skips binary files, supports context lines, streaming and collect modes.
+
+    [Search guide →](guides/search.md)
+
+- **Diff**
+
+    ---
+
+    Compare two directories to find added, removed, modified, and moved files. Content-aware with optional move detection.
+
+    [Diff guide →](guides/diff.md)
+
+- **Sync**
+
+    ---
+
+    Incremental directory sync with dry-run preview, delete-extra support, and progress callbacks. Only copies what changed.
+
+    [Sync guide →](guides/sync.md)
+
+- **Snapshot**
+
+    ---
+
+    Capture file hashes and metadata to JSON. Verify later to detect additions, removals, and modifications.
+
+    [Snapshot guide →](guides/snapshot.md)
+
+- **Disk Usage**
+
+    ---
+
+    Parallel directory size calculation with per-child breakdown, sorted by size. Faster than `du`.
+
+    [Disk Usage guide →](guides/disk-usage.md)
+
+- **Rename**
+
+    ---
+
+    Regex-based batch file rename with dry-run preview and undo support. Safe by default.
+
+    [Rename guide →](guides/rename.md)
 
 </div>
 
@@ -123,6 +171,54 @@ pip install pyfs_watcher
     groups = pyfs_watcher.find_duplicates(["/photos", "/backup"], min_size=1024)
     for g in groups:
         print(f"{g.file_size}B x {len(g.paths)} copies")
+    ```
+
+=== "Search"
+
+    ```python
+    results = pyfs_watcher.search("/project", r"TODO", glob_pattern="*.py")
+    for r in results:
+        for m in r.matches:
+            print(f"{r.path}:{m.line_number}: {m.line_text.strip()}")
+    ```
+
+=== "Diff"
+
+    ```python
+    diff = pyfs_watcher.diff_dirs("/original", "/copy", detect_moves=True)
+    print(f"Added: {len(diff.added)}, Modified: {len(diff.modified)}")
+    ```
+
+=== "Sync"
+
+    ```python
+    result = pyfs_watcher.sync("/source", "/backup", delete_extra=True)
+    print(f"Copied: {len(result.copied)}, Deleted: {len(result.deleted)}")
+    ```
+
+=== "Snapshot"
+
+    ```python
+    snap = pyfs_watcher.snapshot("/important_data")
+    snap.save("baseline.json")
+    result = pyfs_watcher.verify("baseline.json")
+    print("OK" if result.ok else "Changes detected!")
+    ```
+
+=== "Disk Usage"
+
+    ```python
+    usage = pyfs_watcher.disk_usage("/data")
+    for child in usage.children[:5]:
+        print(f"{child.path}: {child.size:,} bytes")
+    ```
+
+=== "Rename"
+
+    ```python
+    result = pyfs_watcher.bulk_rename("/photos", r"IMG_(\d+)", r"photo_\1")
+    for entry in result.renamed:
+        print(f"{entry.old_name} -> {entry.new_name}")
     ```
 
 ---

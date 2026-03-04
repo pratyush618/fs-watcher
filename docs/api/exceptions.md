@@ -11,8 +11,14 @@ graph TD
     B --> D[HashError]
     B --> E[CopyError]
     B --> F[WatchError]
-    A --> G[FileNotFoundError]
-    A --> H[PermissionError]
+    B --> G[SearchError]
+    B --> H[DirDiffError]
+    B --> I[SyncError]
+    B --> J[SnapshotError]
+    B --> K[DiskUsageError]
+    B --> L[RenameError]
+    A --> M[FileNotFoundError]
+    A --> N[PermissionError]
 ```
 
 ---
@@ -42,13 +48,6 @@ class WalkError(FsWatcherError)
 
 Raised when a directory walk operation fails. Typically occurs when the root path cannot be read.
 
-```python
-try:
-    entries = pyfs_watcher.walk_collect("/nonexistent")
-except pyfs_watcher.WalkError as e:
-    print(f"Walk failed: {e}")
-```
-
 ---
 
 ## HashError
@@ -58,15 +57,6 @@ class HashError(FsWatcherError)
 ```
 
 Raised when a file hashing operation fails. This can occur when a file is unreadable or when the thread pool cannot be created for parallel hashing.
-
-```python
-try:
-    result = pyfs_watcher.hash_file("/path/to/file")
-except FileNotFoundError:
-    print("File does not exist")
-except pyfs_watcher.HashError as e:
-    print(f"Hashing failed: {e}")
-```
 
 ---
 
@@ -78,15 +68,6 @@ class CopyError(FsWatcherError)
 
 Raised when a copy or move operation fails. Common causes include destination already exists (when `overwrite=False`), disk full, or permission denied.
 
-```python
-try:
-    pyfs_watcher.copy_files(["source.bin"], "/dest", overwrite=False)
-except FileNotFoundError:
-    print("Source file does not exist")
-except pyfs_watcher.CopyError as e:
-    print(f"Copy failed: {e}")
-```
-
 ---
 
 ## WatchError
@@ -97,14 +78,65 @@ class WatchError(FsWatcherError)
 
 Raised when a file watching operation fails. Typically occurs when the watched path does not exist or the OS watcher cannot be initialized.
 
+---
+
+## SearchError
+
 ```python
-try:
-    with pyfs_watcher.FileWatcher("/nonexistent") as w:
-        for changes in w:
-            pass
-except pyfs_watcher.WatchError as e:
-    print(f"Watch failed: {e}")
+class SearchError(FsWatcherError)
 ```
+
+Raised when a content search operation fails. Typically occurs when the root path does not exist or the regex pattern is invalid.
+
+---
+
+## DirDiffError
+
+```python
+class DirDiffError(FsWatcherError)
+```
+
+Raised when a directory diff operation fails. Typically occurs when a source or target directory does not exist.
+
+---
+
+## SyncError
+
+```python
+class SyncError(FsWatcherError)
+```
+
+Raised when a sync operation fails. Typically occurs when the source directory does not exist.
+
+---
+
+## SnapshotError
+
+```python
+class SnapshotError(FsWatcherError)
+```
+
+Raised when a snapshot or verify operation fails. This can occur when the path is not a directory, the snapshot JSON is malformed, or the snapshot root no longer exists during verification.
+
+---
+
+## DiskUsageError
+
+```python
+class DiskUsageError(FsWatcherError)
+```
+
+Raised when a disk usage operation fails. Typically occurs when the path does not exist or is not a directory.
+
+---
+
+## RenameError
+
+```python
+class RenameError(FsWatcherError)
+```
+
+Raised when a bulk rename operation fails. This can occur when the path is not a directory, the regex pattern is invalid, or an undo is attempted on a dry-run result.
 
 ---
 

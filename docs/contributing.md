@@ -89,6 +89,13 @@ pyfs-watcher/
 │   ├── copy.rs             # Copy/move operations
 │   ├── watch.rs            # Filesystem watching
 │   ├── dedup.rs            # Duplicate detection
+│   ├── search.rs           # Parallel content search
+│   ├── diff.rs             # Directory comparison
+│   ├── sync.rs             # Directory sync
+│   ├── snapshot.rs         # Snapshot/verify
+│   ├── du.rs               # Disk usage
+│   ├── rename.rs           # Batch rename
+│   ├── utils.rs            # Shared walk filter utilities
 │   └── errors.rs           # Error types
 ├── py_src/pyfs_watcher/    # Python package
 │   ├── __init__.py         # Public API re-exports

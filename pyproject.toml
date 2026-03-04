@@ -5,14 +5,14 @@ build-backend = "maturin"
 [project]
 name = "pyfs_watcher"
 requires-python = ">=3.9"
-description = "Rust-powered filesystem toolkit: fast walk, parallel hashing, bulk copy, file watching, and deduplication."
-version = "0.1.1"
+description = "Rust-powered filesystem toolkit: fast walk, parallel hashing, bulk copy, file watching, deduplication, content search, directory diff/sync, snapshots, disk usage, and batch rename."
+version = "0.2.0"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
     { name = "Pratyush Sharma" },
 ]
-keywords = ["filesystem", "walk", "hash", "copy", "watch", "dedup", "rust", "fast"]
+keywords = ["filesystem", "walk", "hash", "copy", "watch", "dedup", "search", "diff", "sync", "snapshot", "rename", "rust", "fast"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",

@@ -4,6 +4,14 @@ from pyfs_watcher._core import (
     CopyError,
     # Copy/Move
     CopyProgress,
+    # Diff
+    DiffEntry,
+    DirDiff,
+    DirDiffError,
+    # Disk Usage
+    DiskUsage,
+    DiskUsageEntry,
+    DiskUsageError,
     # Dedup
     DuplicateGroup,
     FileChange,
@@ -14,15 +22,44 @@ from pyfs_watcher._core import (
     HashError,
     # Hash
     HashResult,
+    # Rename
+    RenameEntry,
+    RenameError,
+    RenameFileError,
+    RenameResult,
+    # Search
+    SearchError,
+    SearchIter,
+    SearchMatch,
+    SearchResult,
+    # Snapshot
+    Snapshot,
+    SnapshotEntry,
+    SnapshotError,
+    # Sync
+    SyncError,
+    SyncFileError,
+    SyncProgress,
+    SyncResult,
+    VerifyChange,
+    VerifyResult,
     # Walk
     WalkEntry,
     WalkError,
     WatchError,
+    bulk_rename,
     copy_files,
+    diff_dirs,
+    disk_usage,
     find_duplicates,
     hash_file,
     hash_files,
     move_files,
+    search,
+    search_iter,
+    snapshot,
+    sync,
+    verify,
     walk,
     walk_collect,
 )
@@ -35,6 +72,12 @@ __all__ = [
     "HashError",
     "CopyError",
     "WatchError",
+    "SearchError",
+    "DirDiffError",
+    "SyncError",
+    "SnapshotError",
+    "DiskUsageError",
+    "RenameError",
     # Walk
     "WalkEntry",
     "walk",
@@ -54,4 +97,36 @@ __all__ = [
     # Dedup
     "DuplicateGroup",
     "find_duplicates",
+    # Search
+    "SearchMatch",
+    "SearchResult",
+    "SearchIter",
+    "search",
+    "search_iter",
+    # Diff
+    "DiffEntry",
+    "MovedEntry",
+    "DirDiff",
+    "diff_dirs",
+    # Sync
+    "SyncFileError",
+    "SyncProgress",
+    "SyncResult",
+    "sync",
+    # Snapshot
+    "SnapshotEntry",
+    "Snapshot",
+    "VerifyChange",
+    "VerifyResult",
+    "snapshot",
+    "verify",
+    # Disk Usage
+    "DiskUsageEntry",
+    "DiskUsage",
+    "disk_usage",
+    # Rename
+    "RenameEntry",
+    "RenameFileError",
+    "RenameResult",
+    "bulk_rename",
 ]
