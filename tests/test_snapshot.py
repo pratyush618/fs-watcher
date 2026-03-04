@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pyfs_watcher
+from pyfs_watcher.types import Snapshot
 
 
 def _create_snapshot_tree(tmp_path: Path) -> Path:
@@ -39,7 +40,7 @@ def test_snapshot_save_load(tmp_path: Path):
     assert data["algorithm"] == "blake3"
 
     # Load and verify
-    loaded = pyfs_watcher.Snapshot.load(snap_path)
+    loaded = Snapshot.load(snap_path)
     assert loaded.total_files == snap.total_files
     assert loaded.algorithm == snap.algorithm
     assert len(loaded.entries) == len(snap.entries)

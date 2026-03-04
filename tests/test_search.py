@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pyfs_watcher
+from pyfs_watcher.errors import SearchError
 
 
 def _create_search_tree(tmp_path: Path) -> Path:
@@ -88,7 +89,7 @@ def test_search_iter(tmp_path: Path):
 def test_search_nonexistent():
     import pytest
 
-    with pytest.raises(pyfs_watcher.SearchError):
+    with pytest.raises(SearchError):
         pyfs_watcher.search("/nonexistent/path/xyz", "pattern")
 
 
@@ -97,7 +98,7 @@ def test_search_invalid_regex():
 
     import pytest
 
-    with tempfile.TemporaryDirectory() as tmp, pytest.raises(pyfs_watcher.SearchError):
+    with tempfile.TemporaryDirectory() as tmp, pytest.raises(SearchError):
         pyfs_watcher.search(tmp, "[invalid")
 
 

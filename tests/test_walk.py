@@ -1,6 +1,7 @@
 import os
 
 import pyfs_watcher
+from pyfs_watcher.errors import WalkError
 
 
 def test_walk_collect_returns_entries(sample_tree):
@@ -42,7 +43,7 @@ def test_walk_sorted(sample_tree):
 
 
 def test_walk_nonexistent_raises():
-    with __import__("pytest").raises(pyfs_watcher.WalkError):
+    with __import__("pytest").raises(WalkError):
         pyfs_watcher.walk_collect("/nonexistent/path/xyz")
 
 

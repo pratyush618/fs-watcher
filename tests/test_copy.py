@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pyfs_watcher
 import pytest
+from pyfs_watcher.errors import CopyError
 
 
 def test_copy_single_file(tmp_path):
@@ -45,7 +46,7 @@ def test_copy_overwrite_false(tmp_path):
     dst = tmp_path / "dst.txt"
     dst.write_text("existing")
 
-    with pytest.raises(pyfs_watcher.CopyError, match="overwrite"):
+    with pytest.raises(CopyError, match="overwrite"):
         pyfs_watcher.copy_files([str(src)], str(dst))
 
 
@@ -60,7 +61,7 @@ def test_copy_overwrite_true(tmp_path):
 
 
 def test_copy_nonexistent_source(tmp_path):
-    with pytest.raises(pyfs_watcher.CopyError):
+    with pytest.raises(CopyError):
         pyfs_watcher.copy_files(["/nonexistent/file.txt"], str(tmp_path))
 
 
@@ -96,5 +97,5 @@ def test_move_file(tmp_path):
 
 
 def test_move_nonexistent_source(tmp_path):
-    with pytest.raises(pyfs_watcher.CopyError):
+    with pytest.raises(CopyError):
         pyfs_watcher.move_files(["/nonexistent/file.txt"], str(tmp_path))
