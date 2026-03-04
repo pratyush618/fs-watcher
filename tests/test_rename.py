@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pyfs_watcher
 import pytest
+from pyfs_watcher.errors import RenameError
 
 
 def test_bulk_rename_dry_run(tmp_path: Path):
@@ -52,7 +53,7 @@ def test_bulk_rename_undo_dry_run_raises(tmp_path: Path):
 
     result = pyfs_watcher.bulk_rename(str(tmp_path), "file", "renamed")
 
-    with pytest.raises(pyfs_watcher.RenameError):
+    with pytest.raises(RenameError):
         result.undo()
 
 
@@ -121,7 +122,7 @@ def test_bulk_rename_no_match(tmp_path: Path):
 
 
 def test_bulk_rename_invalid_regex(tmp_path: Path):
-    with pytest.raises(pyfs_watcher.RenameError):
+    with pytest.raises(RenameError):
         pyfs_watcher.bulk_rename(str(tmp_path), "[invalid", "replacement")
 
 

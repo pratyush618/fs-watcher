@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pyfs_watcher
+from pyfs_watcher.errors import DirDiffError
 
 
 def _create_diff_dirs(tmp_path: Path):
@@ -91,7 +92,7 @@ def test_diff_nonexistent_source(tmp_path: Path):
     tgt = tmp_path / "target"
     tgt.mkdir()
 
-    with pytest.raises(pyfs_watcher.DirDiffError):
+    with pytest.raises(DirDiffError):
         pyfs_watcher.diff_dirs("/nonexistent/path", str(tgt))
 
 

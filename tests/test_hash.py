@@ -2,6 +2,7 @@ import hashlib
 
 import pyfs_watcher
 import pytest
+from pyfs_watcher.errors import HashError
 
 
 def test_hash_file_blake3(tmp_path):
@@ -40,7 +41,7 @@ def test_hash_file_nonexistent():
 def test_hash_file_invalid_algorithm(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("data")
-    with pytest.raises(pyfs_watcher.HashError):
+    with pytest.raises(HashError):
         pyfs_watcher.hash_file(str(f), algorithm="md5")  # type: ignore[arg-type]
 
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pyfs_watcher
+from pyfs_watcher.errors import SyncError
 
 
 def _create_sync_dirs(tmp_path: Path):
@@ -96,7 +97,7 @@ def test_sync_subdirectories(tmp_path: Path):
 def test_sync_nonexistent_source(tmp_path: Path):
     import pytest
 
-    with pytest.raises(pyfs_watcher.SyncError):
+    with pytest.raises(SyncError):
         pyfs_watcher.sync("/nonexistent/path", str(tmp_path))
 
 

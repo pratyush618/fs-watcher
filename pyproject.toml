@@ -6,7 +6,7 @@ build-backend = "maturin"
 name = "pyfs_watcher"
 requires-python = ">=3.9"
 description = "Rust-powered filesystem toolkit: fast walk, parallel hashing, bulk copy, file watching, deduplication, content search, directory diff/sync, snapshots, disk usage, and batch rename."
-version = "0.2.0"
+version = "0.3.0"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [

@@ -3,6 +3,7 @@ import time
 
 import pyfs_watcher
 import pytest
+from pyfs_watcher.errors import WatchError
 
 
 def test_watcher_context_manager(tmp_path):
@@ -71,7 +72,7 @@ def test_watcher_detects_modification(tmp_path):
 
 
 def test_watcher_nonexistent_path():
-    with pytest.raises(pyfs_watcher.WatchError):
+    with pytest.raises(WatchError):
         pyfs_watcher.FileWatcher("/nonexistent/path/xyz")
 
 

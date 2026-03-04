@@ -4,6 +4,27 @@ All notable changes to pyfs-watcher are documented here.
 
 ---
 
+## v0.3.0
+
+**Breaking:** Reorganised the public Python API to keep the top-level namespace clean.
+
+- **`pyfs_watcher.errors`** — All exception classes (`WalkError`, `HashError`, `CopyError`, etc.) now live in a dedicated `errors` submodule.
+- **`pyfs_watcher.types`** — All dataclass/result types (`DiffResult`, `SearchMatch`, `SnapshotResult`, `DuEntry`, `RenamePreview`, `RenameResult`) now live in a dedicated `types` submodule.
+- **Top-level exports** are now limited to the public functions (`walk`, `walk_collect`, `hash_file`, `hash_files`, `copy_files`, `move_files`, `find_duplicates`, `search`, `search_iter`, `diff_dirs`, `sync`, `snapshot`, `verify`, `disk_usage`, `bulk_rename`) and the `FileWatcher` class.
+
+Migration:
+
+```python
+# Before (0.2.x)
+from pyfs_watcher import WalkError, DiffResult
+
+# After (0.3.0)
+from pyfs_watcher.errors import WalkError
+from pyfs_watcher.types import DiffResult
+```
+
+---
+
 ## v0.2.0
 
 Six new feature modules, transforming pyfs-watcher from fast filesystem utils into a comprehensive filesystem toolkit:

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pyfs_watcher
+from pyfs_watcher.errors import DiskUsageError
 
 
 def test_disk_usage_basic(tmp_path: Path):
@@ -49,7 +50,7 @@ def test_disk_usage_glob(tmp_path: Path):
 def test_disk_usage_nonexistent():
     import pytest
 
-    with pytest.raises(pyfs_watcher.DiskUsageError):
+    with pytest.raises(DiskUsageError):
         pyfs_watcher.disk_usage("/nonexistent/path/xyz")
 
 
