@@ -5,7 +5,7 @@ site_description = "Rust-powered filesystem toolkit for Python"
 site_author = "Pratyush Sharma"
 repo_url = "https://github.com/pratyush618/pyfs-watcher"
 repo_name = "pratyush618/pyfs-watcher"
-copyright = "Copyright &copy; 2025 Pratyush Sharma"
+copyright = "Copyright &copy; 2026 Pratyush Sharma"
 
 nav = [
   { "Home" = "index.md" },
