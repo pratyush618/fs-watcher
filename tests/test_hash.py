@@ -41,7 +41,7 @@ def test_hash_file_invalid_algorithm(tmp_path):
     f = tmp_path / "test.txt"
     f.write_text("data")
     with pytest.raises(pyfs_watcher.HashError):
-        pyfs_watcher.hash_file(str(f), algorithm="md5")
+        pyfs_watcher.hash_file(str(f), algorithm="md5")  # type: ignore[arg-type]
 
 
 def test_hash_files_parallel(tmp_path):
