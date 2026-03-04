@@ -29,6 +29,9 @@ env/
 # Claude Code
 .claude/
 
+# Zensical
+site/
+
 # OS
 .DS_Store
 Thumbs.db
