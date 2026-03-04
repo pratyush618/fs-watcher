@@ -12,7 +12,7 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: mypy python/
+        entry: mypy py_src/
         language: system
         pass_filenames: false
         files: \.py$

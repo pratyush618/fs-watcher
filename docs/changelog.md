@@ -4,6 +4,25 @@ All notable changes to pyfs-watcher are documented here.
 
 ---
 
+## v0.2.0
+
+Six new feature modules, transforming pyfs-watcher from fast filesystem utils into a comprehensive filesystem toolkit:
+
+- **Search** — Parallel content search (`search()`, `search_iter()`) using Rust's `regex` crate. Supports glob filtering, case-insensitive matching, context lines, max file size limits, and binary file detection.
+- **Diff** — Directory comparison (`diff_dirs()`) with content-aware diffing and optional move detection. Reports added, removed, modified, unchanged, and moved files.
+- **Sync** — Incremental directory sync (`sync()`) that only copies changed files. Supports `dry_run` preview, `delete_extra` cleanup, progress callbacks, and error-tolerant operation.
+- **Snapshot** — File integrity monitoring (`snapshot()`, `verify()`) with JSON-based snapshots. Captures file hashes, sizes, mtimes, and permissions. Detects additions, removals, and modifications.
+- **Disk Usage** — Parallel size calculation (`disk_usage()`) with per-child breakdown sorted by size. Supports glob filtering and hidden file control.
+- **Rename** — Regex-based batch rename (`bulk_rename()`) with `dry_run=True` by default for safety. Supports recursive operation, directory renaming, and `undo()`.
+
+Additional changes:
+
+- Added shared `WalkFilter` infrastructure in `utils.rs` for consistent filtering across all features
+- Added 6 new typed exception classes (`SearchError`, `DirDiffError`, `SyncError`, `SnapshotError`, `DiskUsageError`, `RenameError`)
+- Full type stubs for all new classes and functions
+- Fixed jwalk `skip_hidden` default — hidden files now correctly appear when `skip_hidden=False`
+- New Cargo dependencies: `regex`, `serde`, `serde_json`, `chrono`
+
 ## v0.1.1
 
 - Bumped project version

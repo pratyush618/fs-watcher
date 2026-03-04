@@ -34,7 +34,7 @@ print(pyfs_watcher.__all__)
 
 ## Quick Tour
 
-The script below exercises all five feature modules. Create a file called `tour.py` and run it:
+The script below exercises all feature modules. Create a file called `tour.py` and run it:
 
 ```python
 import tempfile
@@ -90,7 +90,23 @@ with tempfile.TemporaryDirectory() as tmp:
         for p in g.paths:
             print(f"    {p}")
 
-    # ── 5. Watch ──
+    # ── 5. Search ──
+    print("\n=== Search ===")
+    results = pyfs_watcher.search(tmp, r"content of \w+")
+    for r in results:
+        print(f"  {r.path}: {r.match_count} matches")
+
+    # ── 6. Disk Usage ──
+    print("\n=== Disk Usage ===")
+    usage = pyfs_watcher.disk_usage(tmp)
+    print(f"  Total: {usage.total_size} bytes, {usage.total_files} files")
+
+    # ── 7. Snapshot ──
+    print("\n=== Snapshot ===")
+    snap = pyfs_watcher.snapshot(tmp)
+    print(f"  Snapshot: {snap.total_files} files, {snap.total_size} bytes")
+
+    # ── 8. Watch ──
     print("\n=== Watch ===")
     print("  (FileWatcher is a blocking iterator — see the Watch guide)")
 ```
@@ -108,8 +124,14 @@ graph TD
     B --> D[HashError]
     B --> E[CopyError]
     B --> F[WatchError]
-    A --> G[FileNotFoundError]
-    A --> H[PermissionError]
+    B --> G[SearchError]
+    B --> H[DirDiffError]
+    B --> I[SyncError]
+    B --> J[SnapshotError]
+    B --> K[DiskUsageError]
+    B --> L[RenameError]
+    A --> M[FileNotFoundError]
+    A --> N[PermissionError]
 ```
 
 ```python
@@ -134,5 +156,11 @@ Dive into the individual feature guides:
 - [Copy/Move](guides/copy-move.md) — Bulk file operations
 - [Watch](guides/watch.md) — Filesystem monitoring
 - [Dedup](guides/dedup.md) — Duplicate detection
+- [Search](guides/search.md) — Content search
+- [Diff](guides/diff.md) — Directory comparison
+- [Sync](guides/sync.md) — Directory synchronization
+- [Snapshot](guides/snapshot.md) — File integrity snapshots
+- [Disk Usage](guides/disk-usage.md) — Size analysis
+- [Rename](guides/rename.md) — Batch rename
 
 Or jump to the [API Reference](api/index.md) for complete function signatures.

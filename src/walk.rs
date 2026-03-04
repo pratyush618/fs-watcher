@@ -270,7 +270,9 @@ fn dir_entry_to_walk_entry(entry: &jwalk::DirEntry<((), ())>) -> WalkEntry {
 }
 
 fn build_walkdir(root: PathBuf, opts: &WalkOptions) -> WalkDir {
-    let mut walkdir = WalkDir::new(&root).follow_links(opts.follow_symlinks);
+    let mut walkdir = WalkDir::new(&root)
+        .follow_links(opts.follow_symlinks)
+        .skip_hidden(false); // We do our own hidden-file filtering in should_include
 
     if let Some(depth) = opts.max_depth {
         walkdir = walkdir.max_depth(depth);
