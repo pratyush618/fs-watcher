@@ -3,10 +3,6 @@ hide:
   - navigation
 ---
 
-<p align="center">
-  <img src="assets/logo.svg" alt="pyfs-watcher logo" width="180" />
-</p>
-
 # pyfs-watcher
 
 [![PyPI](https://img.shields.io/pypi/v/pyfs_watcher)](https://pypi.org/project/pyfs_watcher/)

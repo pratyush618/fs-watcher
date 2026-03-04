@@ -45,6 +45,8 @@ nav = [
 
 [project.theme]
 variant = "modern"
+logo = "assets/logo.svg"
+favicon = "assets/favicon/favicon.ico"
 features = [
   "navigation.instant",
   "navigation.instant.prefetch",
@@ -122,3 +124,4 @@ alternate_style = true
 
 [project.extra]
 generator = false
+css = ["assets/extra.css"]
